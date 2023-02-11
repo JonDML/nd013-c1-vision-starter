@@ -65,6 +65,8 @@ This can do easily from terminal:
 ```
 This will give us a url to navigate (tested in chrome browser). Copy/paste given url, enter in **Exploratory Data Analysis.ipynb** file in browser, and run all commands.
 
+Inside jupyter notebook, code has been modified to work in local machine, and comments added to know how it works.
+
 ### Model training and evaluation
 
 This second part has been executed in remote computer due laptop limitations, so example paths will be changed than the previous commands.
@@ -83,7 +85,7 @@ rm -rf ssd_resnet50_v1_fpn_640x640_coco17_tpu-8.tar.gz
 
 #### Generate pipeline
 
-Due to the problems to execute commands correctly, need to execute first this scripts to have a compatible version of packages
+Due to the problems to execute commands correctly, need to execute first this scripts to have a compatible version of packages. **DON'T FORGET TO ENABLE GPU**
 
 ```
 chmod +x /home/workspace/fix_packages_problems.sh
@@ -105,6 +107,22 @@ cd /home/workspace/
 python edit_config.py --train_dir /home/workspace/data/train/ --eval_dir /home/workspace/data/val/ --batch_size 2 --checkpoint /home/workspace/experiments/pretrained_model/ssd_resnet50_v1_fpn_640x640_coco17_tpu-8/checkpoint/ckpt-0 --label_map /home/workspace/experiments/label_map.pbtxt
 ```
 
+After that, there are 2 steps to do the job, and other one to monitoring the progress/results:
+
+1. Train model
+  ```
+  python experiments/model_main_tf2.py --model_dir=experiments/reference --pipeline_config_path=pipeline_new.config --checkpoint_dir=experiments/reference
+  ```
+2. Evaluate model
+  ```
+  python experiments/model_main_tf2.py --model_dir=experiments/reference/ --pipeline_config_path=pipeline_new.config --checkpoint_dir=experiments/reference/
+  ```
+3. Monitor progress/results
+  ```
+  python -m tensorboard.main --logdir experiments/reference/
+  ```
+
+When evaluate model is executed, application will say **waiting for new checkpoint at experiments/reference**. To continue the execution, open **experiments/reference/checkpoint** file and change **model_checkpoint_path** number, until all checkpoint numbers completed to have all data and can analize graphs.
 ## Dataset
 
 ### Dataset analysis
@@ -129,4 +147,58 @@ In other images, we can observe only cars, but can be used to check if algorithm
 
 ### Reference experiment
 
+In the training exercise, using the following configuration
+
+```
+data_augmentation_options {
+    ssd_random_crop {
+
+    }
+  }
+  data_augmentation_options {
+    random_pixel_value_scale {
+      minval: 0.6
+    }
+  }
+  data_augmentation_options {
+    random_horizontal_flip {
+    }
+  }
+  data_augmentation_options {
+    random_crop_image {
+      min_object_covered: 0.0
+      min_aspect_ratio: 0.75
+      max_aspect_ratio: 3.0
+      min_area: 0.75
+      max_area: 1.0
+      overlap_thresh: 0.0
+    }
+  }
+  data_augmentation_options {
+    random_rgb_to_gray {
+    probability: 0.2
+    }
+  }
+```
+
+![Results training model 1](images/tensorboard1.png)
+
+As graphs shows, the loss goes reducing while training the model. The loss curve looks like plateau at the end, indicating that can be difficult to improve result.
+
 ### Improve on the reference
+
+As improvements, good selection of different kind of augmentations can improve model. With that, model will learn real situations instead perfectly taken data, and will be more useful to detection.
+
+Some different augmentations has been proved, but, taking time in creating new data with different augmentations and different configurations of each one, can take long time.
+
+For example, first pipeline generated, created images like following ones:
+
+![Original augmentation options](images/jupyter_augmentations.PNG)
+
+Once modifying augmentations, the images are different as can see here:
+
+![Once augmentations changed](images/jupyter_augmentations2.PNG)
+
+Other point is changing the number of iterations, batch size number or modify learning rate.
+
+Also, different optimizer can be selected to check if data will be improved.
