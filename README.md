@@ -18,6 +18,9 @@
     - [Cross validation](#cross-validation)
   - [Training](#training)
     - [Reference experiment](#reference-experiment)
+      - [Default configuration](#default-configuration)
+      - [Default configuration with new augmentations](#default-configuration-with-new-augmentations)
+      - [Default configuration changing optimizer](#default-configuration-changing-optimizer)
     - [Improve on the reference](#improve-on-the-reference)
 
 
@@ -140,6 +143,7 @@ Some multiple captures more to see results.
 This images are selected after looking some others because pedrestians and cars are mixed, so can be observed bounding boxes colors are correctly selected. This is city environment image, near a crosswalk, so there are more pedrestians than cars in images.
 In other images, we can observe only cars, but can be used to check if algorithm works correctly.
 
+In previous photos, weather and our of day are similar, so results are similar. As mentioned, light of cars affects classification, and this factors would be also affect classification. If used data doesn't mix correctly all conditions images, our model will not be complete and this will can affect object detection.
 
 ### Cross validation
 
@@ -147,7 +151,20 @@ In other images, we can observe only cars, but can be used to check if algorithm
 
 ### Reference experiment
 
-In the training exercise, using the following configuration
+The reference experiment will be subdivided in three parts: default configuration, default configuration + augmentations and default configuration changing optimizer.
+
+Used configuration files are inside **pipelines** folder.
+
+#### Default configuration
+
+The default configuration gives following results:
+
+![Default configuration graph1](images/tensorboard_without_changes1.PNG)
+![Default configuration graph2](images/tensorboard_without_changes2.PNG)
+
+#### Default configuration with new augmentations
+
+For this experiment, the data augmentation used is the following one:
 
 ```
 data_augmentation_options {
@@ -180,10 +197,40 @@ data_augmentation_options {
     }
   }
 ```
-
-![Results training model 1](images/tensorboard1.png)
+And the following images show us the results
+![Default configuration with augmentations1](images/tensorboard_with_augmentations1.PNG)
+![Default configuration with augmentations2](images/tensorboard_with_augmentations2.PNG)
 
 As graphs shows, the loss goes reducing while training the model. The loss curve looks like plateau at the end, indicating that can be difficult to improve result.
+
+#### Default configuration changing optimizer
+
+In this experiment, the optimizer configuration used is:
+
+```
+adam_optimizer: {
+  learning_rate: {
+    manual_step_learning_rate {
+      initial_learning_rate: .0002
+      schedule {
+        step: 4500
+        learning_rate: .0001
+      }
+      schedule {
+        step: 7000
+        learning_rate: .00008
+      }
+      schedule {
+        step: 10000
+        learning_rate: .00004
+      }
+    }
+  }
+}
+```
+And the results are:
+![Default configuration changing optimizer1](images/tensorboard_with_optimizations1.PNG)
+![Default configuration changing optimizer2](images/tensorboard_with_optimizations2.PNG)
 
 ### Improve on the reference
 
