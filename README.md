@@ -232,6 +232,12 @@ And the results are:
 ![Default configuration changing optimizer1](images/tensorboard_with_optimizations1.PNG)
 ![Default configuration changing optimizer2](images/tensorboard_with_optimizations2.PNG)
 
+With all configurations, larger objects has better detection than small ones.
+
+Starting with default configuration, looks like got training curve is fine, but overfitting problems are visible.
+
+Once optimizer changed, the graphs looks better, but out of memory problems got, so all test iterations can't be executed. Anywise, the graphs got looks fine.
+
 ### Improve on the reference
 
 As improvements, good selection of different kind of augmentations can improve model. With that, model will learn real situations instead perfectly taken data, and will be more useful to detection.
