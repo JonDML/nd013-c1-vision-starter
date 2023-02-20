@@ -10,6 +10,7 @@
     - [Install gcloud](#install-gcloud)
     - [Download and Process Data](#download-and-process-data)
     - [Running 'Exploratory Data Analysis.ipynb'](#running-exploratory-data-analysisipynb)
+      - [Additional EDA](#additional-eda)
     - [Model training and evaluation](#model-training-and-evaluation)
       - [Download pretrained models](#download-pretrained-models)
       - [Generate pipeline](#generate-pipeline)
@@ -69,6 +70,20 @@ This can do easily from terminal:
 This will give us a url to navigate (tested in chrome browser). Copy/paste given url, enter in **Exploratory Data Analysis.ipynb** file in browser, and run all commands.
 
 Inside jupyter notebook, code has been modified to work in local machine, and comments added to know how it works.
+
+#### Additional EDA
+
+To generate graphs with information about data, run from terminal:
+
+```
+python create_charts.py
+```
+
+Script will use all **.tfrecord** files inside **/home/workspace/data/test/** folder. It can take too much time calculating over all data, so, **Ctrl+C** pressed, script will stop and will create a **charts.png** file like this one:
+
+![Charts](charts.png)
+
+With this charts, images have a lot of vehicles more than pedrestian and cyclists. Most of boxes size have a small pixels area, and most images have between 5 and 10 objects.
 
 ### Model training and evaluation
 
